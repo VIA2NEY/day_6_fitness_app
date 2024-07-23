@@ -1,3 +1,4 @@
+import 'package:day_6_fitness_app/animations/fade_animations.dart';
 import 'package:day_6_fitness_app/screens/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
@@ -15,7 +16,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   late Animation<double> rippleAnimation;
   late Animation<double> scaleAnimation;
- 
+
   @override
   void initState() {
     super.initState();
@@ -63,8 +64,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       body: PageView(
         controller: _pageController,
         children: <Widget>[
-          makePage(image: 'assets/one.jpg'),
           makePage(image: 'assets/two.jpg'),
+          makePage(image: 'assets/one.jpg'),
           makePage(image: 'assets/three.jpg'),
         ],
       ),
@@ -72,79 +73,69 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Widget makePage({image}) {
-    return SingleChildScrollView(
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(image),
+          fit: BoxFit.cover
+        )
+      ),
       child: Container(
         decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(image),
-            fit: BoxFit.cover
+          gradient: LinearGradient(
+            begin: Alignment.topRight,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.black.withOpacity(.3),
+              Colors.black.withOpacity(.2),
+            ]
           )
         ),
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Colors.black.withOpacity(.3),
-                Colors.black.withOpacity(.3),
-              ]
-            )
-          ),
-          child: Padding(
-            padding: EdgeInsets.all(40),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                SizedBox(height: 50,),
-                Text('Exercise 1', style: TextStyle(color: Colors.white, fontSize: 40, fontWeight: FontWeight.bold),),
-                SizedBox(height: 30,),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text("15", style: TextStyle(color: Colors.yellow[400], fontSize: 40, fontWeight: FontWeight.bold),),
-                    Text("Minutes", style: TextStyle(color: Colors.white, fontSize: 30),),
-                  ],
-                ),
-                SizedBox(height: 20,),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text("3", style: TextStyle(color: Colors.yellow[400], fontSize: 40, fontWeight: FontWeight.bold),),
-                    Text("Exercises", style: TextStyle(color: Colors.white, fontSize: 30),),
-                  ],
-                ),
-                SizedBox(height: 110,),
-                Align(
-                  child: Text("Start the morning with your health", 
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.w100),),
-                ),
-                SizedBox(height: 20,),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: AnimatedBuilder(
-                    animation: rippleAnimation,
-                    builder: (context, child) => Container(
-                      width: rippleAnimation.value,
-                      height: rippleAnimation.value,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.blue.withOpacity(.4)
-                        ),
-                        child: InkWell(
-                          onTap: () {
-                            scaleController.forward();
-                          },
-                          child: AnimatedBuilder(
-                            animation: scaleAnimation,
-                            builder: (context, child) => Transform.scale(
-                              scale: scaleAnimation.value,
-                              child: Container(
-                                margin: EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.blue
-                                ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 40, horizontal: 30),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 60,),
+                  FadeAnimation(1.5, Text('Bonjour\nhealth body', style: TextStyle(color: Color.fromARGB(255, 200, 224, 229), fontSize: 45, fontWeight: FontWeight.w900),)),
+                  SizedBox(height: 20,),
+                  FadeAnimation(1.5, Text('Avec cette application vous pouvez essayer different activité \net choisir ceux que vous apprecier le plus.', style: TextStyle(color: Color.fromARGB(255, 185, 202, 206), fontSize: 18, height: 1.4, fontWeight: FontWeight.w300),)),
+                  SizedBox(height: 40,),
+                ],
+              ),
+              
+              FadeAnimation(1, Align(
+                alignment: Alignment.bottomCenter,
+                child: AnimatedBuilder(
+                  animation: rippleAnimation,
+                  builder: (context, child) => Container(
+                    width: rippleAnimation.value,
+                    height: rippleAnimation.value,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white.withOpacity(.4)
+                      ),
+                      child: InkWell(
+                        onTap: () {
+                          scaleController.forward();
+                        },
+                        child: AnimatedBuilder(
+                          animation: scaleAnimation,
+                          builder: (context, child) => Transform.scale(
+                            scale: scaleAnimation.value,
+                            child: Container(
+                              margin: EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white
+                              ),
+                              child: scaleController.status == AnimationStatus.forward || scaleController.status == AnimationStatus.completed ? null : Center(
+                                child: Icon(Icons.fingerprint, size: 40,)
                               ),
                             ),
                           ),
@@ -152,12 +143,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       ),
                     ),
                   ),
-                )
-              ],
-            ),
+                ),
+              ))
+            ],
           ),
-        )
-      ),
+        ),
+      )
     );
   }
 }
